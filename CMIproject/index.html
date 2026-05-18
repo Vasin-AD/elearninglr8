@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>AquaCare - Умный аквариум</title>
+    <meta name="description" content="Панель AquaCare: семья, QR-приглашение, лента событий и учёт обслуживания аквариума.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<main class="app-container">
+    <div class="header">
+        <button type="button" class="qr-btn" id="btnQr" aria-label="Пригласить по QR">QR</button>
+        <div>
+            <div class="header-title">AquaCare Pro</div>
+            <div class="header-subtitle">Онлайн • <span id="familyCountLabel">Семья (1)</span></div>
+            <div class="family-preview" id="familyListPreview" aria-live="polite"></div>
+        </div>
+    </div>
+
+    <div class="status-circle">
+        <div class="temp-val">26.4°C</div>
+        <div class="temp-label">Вода в норме</div>
+    </div>
+
+    <div class="goal-section">
+        <div class="goal-row">
+            <span>Чистка через 4 дня</span>
+            <span>65%</span>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="feed" id="activityFeed" aria-live="polite" aria-relevant="additions text"></div>
+
+    <div class="controls">
+        <button type="button" class="btn" id="btnLight" aria-label="Переключить свет">💡 Свет</button>
+        <button type="button" class="btn" id="btnFeed" aria-label="Ручное кормление">🐟 Корм</button>
+        <button type="button" class="btn btn-special" id="btnMaintenance" aria-label="Меню обслуживания">⚙️ Обслуживание</button>
+    </div>
+</main>
+
+<div id="qrModal" class="qr-overlay" aria-hidden="true" role="presentation">
+    <div class="qr-card" role="dialog" aria-modal="true" aria-labelledby="qrTitle">
+        <h3 id="qrTitle">Приглашение в семью</h3>
+        <p>Отсканируйте код — у вас в аккаунте добавится участник аквариума.</p>
+        <div id="qrHost"></div>
+        <button type="button" class="qr-close" id="qrClose">Закрыть</button>
+    </div>
+</div>
+
+<div id="maintModal" class="maint-overlay" aria-hidden="true" role="presentation">
+    <div class="maint-sheet" role="dialog" aria-modal="true" aria-labelledby="maintTitle">
+        <div class="maint-grab" aria-hidden="true"></div>
+        <div class="maint-toolbar">
+            <button type="button" class="maint-icon-btn" id="maintBack" disabled aria-label="Назад">‹</button>
+            <h2 class="maint-toolbar-title" id="maintTitle">Обслуживание</h2>
+            <button type="button" class="maint-icon-btn" id="maintClose" aria-label="Закрыть">×</button>
+        </div>
+        <div class="maint-body">
+            <p class="maint-sub" id="maintSubtitle">Выберите периодичность</p>
+            <div class="maint-list" id="maintList"></div>
+        </div>
+    </div>
+</div>
+
+<div id="tempModal" class="maint-overlay" aria-hidden="true" role="presentation">
+    <div class="maint-sheet" role="dialog" aria-modal="true" aria-labelledby="tempTitle">
+        <div class="maint-grab" aria-hidden="true"></div>
+        <div class="maint-toolbar">
+            <button type="button" class="maint-icon-btn" id="tempBack" disabled aria-label="Назад" style="opacity: 0; pointer-events: none;"></button>
+            <h2 class="maint-toolbar-title" id="tempTitle">Температура</h2>
+            <button type="button" class="maint-icon-btn" id="tempClose" aria-label="Закрыть">×</button>
+        </div>
+        <div class="maint-body">
+            <p class="maint-sub">Выберите целевую температуру воды</p>
+            <div class="temp-control">
+                <div class="temp-display">
+                    <span id="tempValue">26</span>°C
+                </div>
+                <input type="range" id="tempSlider" min="20" max="30" value="26" class="temp-slider">
+                <div class="temp-labels">
+                    <span>20°C</span>
+                    <span>30°C</span>
+                </div>
+                <button type="button" class="maint-option" id="tempApply" style="margin-top: 20px;">Применить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="lightModal" class="maint-overlay" aria-hidden="true" role="presentation">
+    <div class="maint-sheet" role="dialog" aria-modal="true" aria-labelledby="lightTitle">
+        <div class="maint-grab" aria-hidden="true"></div>
+        <div class="maint-toolbar">
+            <button type="button" class="maint-icon-btn" id="lightBack" disabled aria-label="Назад" style="opacity: 0; pointer-events: none;"></button>
+            <h2 class="maint-toolbar-title" id="lightTitle">Свет</h2>
+            <button type="button" class="maint-icon-btn" id="lightClose" aria-label="Закрыть">×</button>
+        </div>
+        <div class="maint-body">
+            <p class="maint-sub">Управление освещением</p>
+            <div class="light-control">
+                <button type="button" class="light-toggle" id="lightToggle">💡 Свет: Включен</button>
+                <p class="maint-sub" style="margin-top: 20px;">Яркость</p>
+                <div class="light-display">
+                    <span id="lightValue">100</span>%
+                </div>
+                <input type="range" id="lightSlider" min="0" max="100" value="100" class="temp-slider">
+                <div class="temp-labels">
+                    <span>0%</span>
+                    <span>100%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="feedModal" class="maint-overlay" aria-hidden="true" role="presentation">
+    <div class="maint-sheet" role="dialog" aria-modal="true" aria-labelledby="feedTitle">
+        <div class="maint-grab" aria-hidden="true"></div>
+        <div class="maint-toolbar">
+            <button type="button" class="maint-icon-btn" id="feedBack" disabled aria-label="Назад" style="opacity: 0; pointer-events: none;"></button>
+            <h2 class="maint-toolbar-title" id="feedTitle">Кормление</h2>
+            <button type="button" class="maint-icon-btn" id="feedClose" aria-label="Закрыть">×</button>
+        </div>
+        <div class="maint-body">
+            <p class="maint-sub">Выберите количество порций</p>
+            <div class="feed-control">
+                <div class="feed-options">
+                    <button type="button" class="maint-option feed-option" data-portions="1">1 порция</button>
+                    <button type="button" class="maint-option feed-option" data-portions="2">2 порции</button>
+                    <button type="button" class="maint-option feed-option" data-portions="3">3 порции</button>
+                    <button type="button" class="maint-option feed-option" data-portions="5">5 порций</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
