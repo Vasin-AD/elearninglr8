@@ -1,0 +1,519 @@
+/**
+ * style.css — AquaCare
+ * Глобальные переменные темы, вёрстка карточки приложения, шапка, виджет температуры,
+ * прогресс «чистки», лента активности, сетка кнопок, модальные окна QR и обслуживания.
+ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+    --bg-color: #0f172a;
+    --card-bg: rgba(30, 41, 59, 0.7);
+    --accent-blue: #38bdf8;
+    --accent-green: #4ade80;
+    --text-main: #f8fafc;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: var(--text-main);
+    margin: 0;
+    min-height: 100dvh;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    padding:
+        calc(12px + var(--safe-top))
+        calc(12px + var(--safe-right))
+        calc(12px + var(--safe-bottom))
+        calc(12px + var(--safe-left));
+    overflow-x: hidden;
+    overscroll-behavior-y: contain;
+    -webkit-tap-highlight-color: rgba(56, 189, 248, 0.15);
+}
+
+.app-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: clamp(20px, 5vw, 30px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: clamp(16px, 4vw, 25px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+/* Шапка */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: clamp(20px, 5vw, 30px);
+    flex-shrink: 0;
+}
+.header > div:last-child {
+    min-width: 0;
+    flex: 1;
+    text-align: right;
+}
+
+.header-title {
+    font-weight: bold;
+}
+
+.header-subtitle {
+    font-size: 0.7rem;
+    color: #94a3b8;
+}
+
+.qr-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    color: white;
+    touch-action: manipulation;
+    font-size: 1rem;
+}
+
+/* Виджет температуры */
+.status-circle {
+    flex-shrink: 0;
+    text-align: center;
+    margin-bottom: clamp(20px, 5vw, 30px);
+    padding: 16px;
+    border-radius: 50%;
+    border: 4px solid var(--accent-blue);
+    width: min(150px, 42vw);
+    height: min(150px, 42vw);
+    min-width: 120px;
+    min-height: 120px;
+    margin: 0 auto clamp(20px, 5vw, 30px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+}
+
+.temp-val { font-size: clamp(1.75rem, 8vw, 2.5rem); font-weight: bold; }
+.temp-label { font-size: 0.8rem; color: #94a3b8; }
+
+/* Прогресс-бар */
+.goal-section { margin-bottom: 20px; flex-shrink: 0; }
+.goal-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+}
+.progress-container {
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    margin-top: 10px;
+}
+.progress-bar {
+    width: 65%;
+    height: 100%;
+    background: var(--accent-green);
+    border-radius: 10px;
+    box-shadow: 0 0 10px var(--accent-green);
+}
+
+/* Лента активности */
+.feed {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+    padding: 15px;
+    max-height: min(180px, 28vh);
+    flex: 1 1 auto;
+    min-height: 100px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 20px;
+}
+.feed-item {
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+    border-left: 2px solid var(--accent-blue);
+    padding-left: 10px;
+}
+
+/* Кнопки управления */
+.controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: auto;
+    padding-bottom: 2px;
+    flex-shrink: 0;
+}
+.btn {
+    background: var(--accent-blue);
+    border: none;
+    padding: 14px 16px;
+    min-height: 48px;
+    border-radius: 15px;
+    color: var(--bg-color);
+    font-weight: bold;
+    font-size: clamp(0.9rem, 3.5vw, 1rem);
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+    touch-action: manipulation;
+}
+.btn:active { transform: scale(0.97); }
+.btn-special { background: var(--accent-green); grid-column: span 2; }
+
+@media (max-width: 360px) {
+    .controls { gap: 10px; }
+}
+
+/* Модальное меню обслуживания */
+.maint-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(15, 23, 42, 0.72);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding:
+        calc(12px + var(--safe-top))
+        calc(12px + var(--safe-right))
+        calc(12px + var(--safe-bottom))
+        calc(12px + var(--safe-left));
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+.maint-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+.maint-sheet {
+    width: 100%;
+    max-width: 400px;
+    max-height: min(85dvh, 600px);
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 22px 22px 0 0;
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.45);
+    display: flex;
+    flex-direction: column;
+    transform: translateY(100%);
+    transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.maint-overlay.is-open .maint-sheet {
+    transform: translateY(0);
+}
+.maint-grab {
+    width: 40px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    margin: 10px auto 6px;
+    flex-shrink: 0;
+}
+.maint-toolbar {
+    display: grid;
+    grid-template-columns: 44px 1fr 44px;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+}
+.maint-toolbar-title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.25;
+}
+.maint-icon-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    color: var(--text-main);
+    font-size: 1.35rem;
+    line-height: 1;
+    cursor: pointer;
+    touch-action: manipulation;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.maint-icon-btn:disabled {
+    opacity: 0;
+    pointer-events: none;
+}
+.maint-body {
+    padding: 14px 16px calc(16px + var(--safe-bottom));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.maint-sub {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    text-align: center;
+    margin: 0 0 14px;
+}
+.maint-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.maint-option {
+    width: 100%;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+    padding: 14px 16px;
+    min-height: 48px;
+    border-radius: 14px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: background 0.2s, transform 0.15s;
+}
+.maint-option:active {
+    transform: scale(0.98);
+    background: rgba(56, 189, 248, 0.2);
+}
+
+/* QR-приглашение */
+.qr-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 190;
+    background: rgba(15, 23, 42, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding:
+        calc(12px + var(--safe-top))
+        calc(12px + var(--safe-right))
+        calc(12px + var(--safe-bottom))
+        calc(12px + var(--safe-left));
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+.qr-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+.qr-card {
+    width: 100%;
+    max-width: 320px;
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 22px;
+    padding: 20px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+.qr-card h3 {
+    margin: 0 0 8px;
+    font-size: 1.1rem;
+}
+.qr-card p {
+    margin: 0 0 16px;
+    font-size: 0.78rem;
+    color: #94a3b8;
+    line-height: 1.4;
+}
+#qrHost {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    margin-bottom: 16px;
+}
+#qrHost canvas, #qrHost img {
+    border-radius: 12px;
+    max-width: 100%;
+    height: auto;
+}
+.qr-close {
+    width: 100%;
+    background: var(--accent-blue);
+    border: none;
+    padding: 14px;
+    border-radius: 14px;
+    color: var(--bg-color);
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+.family-preview {
+    margin-top: 6px;
+    font-size: 0.65rem;
+    color: #94a3b8;
+    line-height: 1.35;
+    max-width: 100%;
+    word-break: break-word;
+}
+
+/* Клавиатура: явное кольцо фокуса без «мигания» при тапе мышью */
+.btn:focus-visible,
+.qr-btn:focus-visible,
+.qr-close:focus-visible,
+.maint-icon-btn:focus-visible,
+.maint-option:focus-visible {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+}
+
+#qrHost.qr-host-error {
+    color: #fca5a5;
+    font-size: 0.85rem;
+    line-height: 1.35;
+    padding: 12px;
+    text-align: center;
+}
+
+/* Элементы управления температурой */
+.temp-control {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.temp-display {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--accent-blue);
+}
+
+.temp-slider, .light-slider {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.temp-slider::-webkit-slider-thumb, .light-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+}
+
+.temp-slider::-moz-range-thumb, .light-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+}
+
+.temp-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+/* Элементы управления светом */
+.light-control {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.light-toggle {
+    width: 100%;
+    background: rgba(56, 189, 248, 0.15);
+    border: 2px solid var(--accent-blue);
+    padding: 16px;
+    border-radius: 14px;
+    color: var(--text-main);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: background 0.2s;
+}
+
+.light-toggle.off {
+    background: rgba(148, 163, 184, 0.1);
+    border-color: #94a3b8;
+}
+
+.light-display {
+    text-align: center;
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: var(--accent-blue);
+}
+
+/* Элементы управления кормлением */
+.feed-control {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.feed-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.feed-option {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+}
+
+.feed-option.selected {
+    background: rgba(56, 189, 248, 0.2);
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .btn,
+    .maint-overlay,
+    .maint-sheet,
+    .maint-option,
+    .qr-overlay {
+        transition: none !important;
+    }
+}
